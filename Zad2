@@ -1,0 +1,37 @@
+import pygame
+
+pygame.init()
+
+WIDTH, HEIGHT = 400, 400
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Figura")
+
+BLUE = (0, 0, 255)
+WHITE = (255, 255, 255)
+
+def draw_triangle(surface, color, point1, point2, point3):
+    pygame.draw.polygon(surface, color, [point1, point2, point3])
+
+running = True
+while running:
+    screen.fill(WHITE)
+
+    cx, cy = WIDTH // 2, HEIGHT // 2
+
+    rect_width = 200
+    rect_height = 50
+    pygame.draw.rect(screen, BLUE, (cx - rect_width // 2, cy - rect_height // 2, rect_width, rect_height))
+
+    top_triangle = [(cx, cy - rect_height // 2), (cx - 50, cy - 100), (cx + 50, cy - 100)]
+    draw_triangle(screen, BLUE, *top_triangle)
+
+    bottom_triangle = [(cx, cy + rect_height // 2), (cx - 50, cy + 100), (cx + 50, cy + 100)]
+    draw_triangle(screen, BLUE, *bottom_triangle)
+
+    pygame.display.flip()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+pygame.quit()

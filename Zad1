@@ -1,0 +1,86 @@
+import pygame
+import math
+
+pygame.init()
+
+WIDTH, HEIGHT = 600, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Transformacje Siedmiokata")
+
+num_sides = 7
+radius = 150
+center = (WIDTH // 2, HEIGHT // 2)
+
+def get_polygon_vertices(center, radius, num_sides, angle_offset=0):
+    vertices = []
+    cx, cy = center
+    for i in range(num_sides):
+        angle = 2 * math.pi * i / num_sides + math.radians(angle_offset)
+        x = cx + radius * math.cos(angle)
+        y = cy + radius * math.sin(angle)
+        vertices.append((x, y))
+    return vertices
+
+def rotate_polygon(vertices, angle, center):
+    cx, cy = center
+    angle = math.radians(angle)
+    rotated_vertices = []
+    for x, y in vertices:
+        x_new = cx + (x - cx) * math.cos(angle) - (y - cy) * math.sin(angle)
+        y_new = cy + (x - cx) * math.sin(angle) + (y - cy) * math.cos(angle)
+        rotated_vertices.append((x_new, y_new))
+    return rotated_vertices
+
+def scale_polygon(vertices, scale_x, scale_y, center):
+    cx, cy = center
+    scaled_vertices = []
+    for x, y in vertices:
+        x_new = cx + (x - cx) * scale_x
+        y_new = cy + (y - cy) * scale_y
+        scaled_vertices.append((x_new, y_new))
+    return scaled_vertices
+
+def shear_polygon(vertices, shear_x, shear_y, center):
+    cx, cy = center
+    sheared_vertices = []
+    for x, y in vertices:
+        x_new = x + shear_x * (y - cy)
+        y_new = y + shear_y * (x - cx)
+        sheared_vertices.append((x_new, y_new))
+    return sheared_vertices
+
+polygon_vertices = get_polygon_vertices(center, radius, num_sides)
+
+running = True
+while running:
+    screen.fill((255, 255, 0))
+    pygame.draw.polygon(screen, (0, 0, 255), polygon_vertices) 
+
+    pygame.display.flip()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_1:
+                polygon_vertices = scale_polygon(get_polygon_vertices(center, radius, num_sides), 0.5, 0.5, center)  
+            elif event.key == pygame.K_2:
+                polygon_vertices = rotate_polygon(polygon_vertices, 45, center) 
+            elif event.key == pygame.K_3:
+                polygon_vertices = scale_polygon(rotate_polygon(get_polygon_vertices(center, radius, num_sides), 90, center), 1, 1.5, center) 
+            elif event.key == pygame.K_4:
+                polygon_vertices = shear_polygon(rotate_polygon(get_polygon_vertices(center, radius, num_sides), 30, center), 0.3, 0, center)  
+            elif event.key == pygame.K_5:
+                polygon_vertices = scale_polygon(polygon_vertices, 1.5, 1, center)  
+            elif event.key == pygame.K_6:
+                polygon_vertices = shear_polygon(polygon_vertices, -0.3, 0, center)  
+            elif event.key == pygame.K_7:
+                polygon_vertices = scale_polygon(rotate_polygon(get_polygon_vertices(center, radius, num_sides), 270, center), 1, 1.5, center)  
+            elif event.key == pygame.K_8:
+                polygon_vertices = rotate_polygon(polygon_vertices, -45, center) 
+            elif event.key == pygame.K_9:
+                polygon_vertices = scale_polygon(polygon_vertices, 1.2, -1.5, center) 
+                polygon_vertices = shear_polygon(polygon_vertices, 0.3, 0, center)  
+ 
+
+pygame.quit()
